@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-web-app
+  labels:
+    app: sample-web
+spec:
+  replicas: 2 # Spins up 2 matching container instances for backup stability
+  selector:
+    matchLabels:
+      app: sample-web
+  template:
+    metadata:
+      labels:
+        app: sample-web
+    spec:
+      containers:
+      - name: nginx-server
+        image: nginx:stable-alpine # A secure, ultra-lightweight web server image
+        ports:
+        - containerPort: 80 # The port the container listens on internally
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-web-service
+spec:
+  type: NodePort # Exposes the service externally outside the cluster
+  selector:
+    app: sample-web
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080 # The manual port number you can type in your browser to visit the app
+
+
